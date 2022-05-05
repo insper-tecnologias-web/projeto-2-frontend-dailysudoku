@@ -4,27 +4,31 @@ import './App.css';
 import axios from "axios";
 import data from "./game.js"
 import Tabuleiro from './components/Tabuleiro/Tabuleiro';
+import Header from './components/Header/Header';
 
 function App() {
 
-  const [tabuleiro, setTabuleiro] = useState({});
-
-
-  // useEffect(() => {
-    
-  //   axios
-  //     .get("http://127.0.0.1:8000/api/sudoku/1")
-  //     .then((res) => {
-  //       // setNotes(res.data)
-  //       console.log(res.data)
-  //     })
-  //   }, []);
-
-  console.log(data)
+  const [jogo, setJogo] = useState({});
   
+  // { dificuldade: "dificil", tabuleiro: [
+      // [{linha-coluna: [0,3] valor : 5, resposta: 8, clicado: true}
+  // ]}
+
+
+  useEffect(() => {
+    
+    axios
+      .get("http://127.0.0.1:8000/api/sudoku/1/")
+      .then((res) => {
+        setJogo(res.data);
+      })
+    }, []);
+
+  console.log(jogo)
   return (
     <div className="App"> 
-      <Tabuleiro/>
+      <Header/>
+      <Tabuleiro data={jogo}/>
 
     </div>
   );

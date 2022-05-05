@@ -7,9 +7,12 @@
     justify-content: center;
     align-items: center;
     margin: 0.2rem;
+
 }
 
 .conteudo-quadrado{
     margin: 0px;
     color: white;
+    font-family: 'Roboto', sans-serif;
+    font-weight:bolder;
 }

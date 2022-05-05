@@ -6,21 +6,21 @@ export default function Bloco(props) {
     return (
         <div className="bloco-container">
             <div className="bloco-linha">
-                <Quadrado id = {1} valor={8}/>
-                <Quadrado id = {2} valor={0}/>
-                <Quadrado id = {3} valor={2}/>
+                <Quadrado id = {[props.blocoi * 3, props.blocoj*3]} valor={8}/>
+                <Quadrado id = {[props.blocoi * 3, props.blocoj*3 + 1]} valor={0}/>
+                <Quadrado id = {[props.blocoi * 3, props.blocoj*3 + 2]} valor={2}/>
             </div>
 
             <div className="bloco-linha">
-                <Quadrado id = {4} valor={0}/>
-                <Quadrado id = {5} valor={0}/>
-                <Quadrado id = {6} valor={0}/>
+                <Quadrado id = {[props.blocoi * 3 + 1, props.blocoj*3]} valor={8}/>
+                <Quadrado id = {[props.blocoi * 3 + 1, props.blocoj*3 + 1]} valor={0}/>
+                <Quadrado id = {[props.blocoi * 3 + 1, props.blocoj*3 + 2]} valor={2}/>
             </div>
             
             <div className="bloco-linha">
-                <Quadrado id = {7} valor={0}/>
-                <Quadrado id = {8} valor={0}/>
-                <Quadrado id = {9} valor={0}/>
+                <Quadrado id = {[props.blocoi * 3 + 2, props.blocoj*3]} valor={8}/>
+                <Quadrado id = {[props.blocoi * 3 + 2, props.blocoj*3 + 1]} valor={0}/>
+                <Quadrado id = {[props.blocoi * 3 + 2, props.blocoj*3 + 2]} valor={2}/>
             </div>
             
         </div>
