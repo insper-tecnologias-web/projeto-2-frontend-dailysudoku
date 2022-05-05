@@ -1,0 +1,15 @@
+.bloco-container{
+    display: flex;
+    flex-direction: column;
+    /* border: solid black 0.001rem; */
+    /* border-radius: 0.3rem; */
+    padding: 0px;
+    margin:0.5rem;
+}
+
+.bloco-linha{
+    display: flex;
+    flex-direction: row;
+    padding: 0px;
+    margin:0px
+}
