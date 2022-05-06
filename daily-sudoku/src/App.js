@@ -8,12 +8,7 @@ import Header from './components/Header/Header';
 
 function App() {
 
-  const [jogo, setJogo] = useState({});
-  
-  // { dificuldade: "dificil", tabuleiro: [
-      // [{linha-coluna: [0,3] valor : 5, resposta: 8, clicado: true}
-  // ]}
-
+  const [jogo, setJogo] = useState(null);
 
   useEffect(() => {
     
@@ -24,11 +19,37 @@ function App() {
       })
     }, []);
 
-  console.log(jogo)
-  return (
+
+  function atualizaClicado(event, id) {
+    console.log(id)
+    setJogo((prevJogo) => {
+      return (
+        {
+          dificuldade: prevJogo.dificuldade,
+
+          tabuleiro: prevJogo.tabuleiro.map(obj => {
+            if (obj.id === id) {
+              return {...obj, clicado: true}
+
+            } else if (obj.id === prevJogo.ultimo_clicado){
+              return {...obj, clicado: false}
+              
+            } else {
+              return obj
+            }
+          }) ,
+          
+          ultimo_clicado : id
+        }
+      )
+    })
+    
+  }
+  
+  return jogo && (
     <div className="App"> 
       <Header/>
-      <Tabuleiro data={jogo}/>
+      <Tabuleiro data={jogo} atualizaClicado = {atualizaClicado}/>
 
     </div>
   );
