@@ -42,14 +42,37 @@ function App() {
           ultimo_clicado : id
         }
       )
-    })
+    })  
+  }
+
+  function atualizaValor(event, id){
+    let novoValor = event.target.value;
+    
+
+    setJogo((prevJogo) => {
+      return (
+        {
+          dificuldade: prevJogo.dificuldade,
+
+          tabuleiro: prevJogo.tabuleiro.map(obj => {
+            if (obj.id === id && !obj.fixo) {
+              return {...obj, valor: parseInt(novoValor.charAt(novoValor.length - 1))}      
+            } else {
+              return obj
+            }
+          }) ,
+          
+          ultimo_clicado : prevJogo.ultimo_clicado
+        }
+      )
+    })  
     
   }
   
   return jogo && (
     <div className="App"> 
-      <Header/>
-      <Tabuleiro data={jogo} atualizaClicado = {atualizaClicado}/>
+      <Header/> 
+      <Tabuleiro data={jogo} atualizaClicado = {atualizaClicado} atualizaValor = {atualizaValor}/>
 
     </div>
   );

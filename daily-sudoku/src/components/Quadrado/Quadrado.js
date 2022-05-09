@@ -7,8 +7,6 @@ export default function Quadrado(props) {
     // {props.valor ? props.valor : ""}
     
     // console.log(props.objeto)
-    const [valor,setValor] = useState(props.objeto.valor);
-
     
 
     let classeCssContainer = "";
@@ -17,16 +15,35 @@ export default function Quadrado(props) {
     } else {
         classeCssContainer = "quadrado-container"
     }
+
+    let focus 
+    if (props.objeto.clicado){
+        focus = "autofocus"
+    }
     
     
     return (
-        <div onClick={(event) => props.atualizaClicado(event, props.objeto.id)} className={classeCssContainer}>
-            {/* <input 
-                className="conteudo-quadrado"
-                placeholder = {valor ? valor : ""} 
-                value = {valor}
-            /> */}
-            <h1 className="conteudo-quadrado">{valor}</h1>
+        <div 
+            onClick={(event) => props.atualizaClicado(event, props.objeto.id)}  
+            className={classeCssContainer}
+        >
+            {props.objeto.clicado ? 
+            <input 
+                className="form-quadrado"
+                type="number"
+                onChange= {(event) => props.atualizaValor(event, props.objeto.id)}
+                value={props.objeto.valor ? props.objeto.valor : ""} 
+                autoFocus
+            /> 
+            : 
+            <input 
+                className="form-quadrado"
+                type="number"
+                onChange= {(event) => props.atualizaValor(event, props.objeto.id)}
+                value={props.objeto.valor ? props.objeto.valor : ""} 
+            />}
+            
+            {/* <h1 className="conteudo-quadrado">{props.objeto.valor}</h1> */}
         </div>
     )
 }
