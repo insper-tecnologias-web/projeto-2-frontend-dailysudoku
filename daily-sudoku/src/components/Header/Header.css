@@ -6,6 +6,9 @@
     align-items: center;
     font-family: 'Josefin Sans', sans-serif;
     font-weight: 400;
+    background-color:#009491;
+    box-shadow: 0 0px 5px rgba(0,0,0,0.23), 0 6px 6px rgba(0,0,0,0.27);
+    padding: 0;
 }
 
 .botoes-dificuldade{
@@ -23,7 +26,6 @@
     width:40%;
     font-weight: bold;
 }
-
 
 
 .container-direita{

@@ -13,6 +13,8 @@ export default function Bloco(props) {
                     objeto = {props.data.tabuleiro[(props.blocoi * 3).toString() + (props.blocoj*3).toString() - (props.blocoi * 3)]}
                     atualizaClicado={props.atualizaClicado}
                     atualizaValor = {props.atualizaValor}
+                    atualizaClicadoSeta = {props.atualizaClicadoSeta}
+                    focus = {props.focus}
                 />
 
                 <Quadrado 
@@ -20,6 +22,8 @@ export default function Bloco(props) {
                     objeto = {props.data.tabuleiro[(props.blocoi * 3).toString() + (props.blocoj*3 + 1).toString() - (props.blocoi * 3)]}
                     atualizaClicado={props.atualizaClicado}
                     atualizaValor = {props.atualizaValor}
+                    atualizaClicadoSeta = {props.atualizaClicadoSeta}
+                    focus = {props.focus}
                 />
                 
                 <Quadrado 
@@ -27,6 +31,8 @@ export default function Bloco(props) {
                     objeto = {props.data.tabuleiro[(props.blocoi * 3).toString() + (props.blocoj*3 + 2).toString() - (props.blocoi * 3)]}
                     atualizaClicado={props.atualizaClicado}
                     atualizaValor = {props.atualizaValor}
+                    atualizaClicadoSeta = {props.atualizaClicadoSeta}
+                    focus = {props.focus}
                 />
             </div>
 
@@ -36,6 +42,8 @@ export default function Bloco(props) {
                     objeto = {props.data.tabuleiro[(props.blocoi * 3 + 1).toString() + (props.blocoj*3).toString() - (props.blocoi * 3 + 1)]}
                     atualizaClicado={props.atualizaClicado}
                     atualizaValor = {props.atualizaValor}
+                    atualizaClicadoSeta = {props.atualizaClicadoSeta}
+                    focus = {props.focus}
                  />
                  
                 <Quadrado 
@@ -43,6 +51,8 @@ export default function Bloco(props) {
                     objeto = {props.data.tabuleiro[(props.blocoi * 3 + 1).toString() + (props.blocoj*3 + 1).toString() - (props.blocoi * 3 + 1)]}
                     atualizaClicado={props.atualizaClicado}
                     atualizaValor = {props.atualizaValor}
+                    atualizaClicadoSeta = {props.atualizaClicadoSeta}
+                    focus = {props.focus}
                 />
                 
                 <Quadrado 
@@ -50,6 +60,8 @@ export default function Bloco(props) {
                     objeto = {props.data.tabuleiro[(props.blocoi * 3 + 1).toString() + (props.blocoj*3 + 2).toString() - (props.blocoi * 3 + 1)]}
                     atualizaClicado={props.atualizaClicado}
                     atualizaValor = {props.atualizaValor}
+                    atualizaClicadoSeta = {props.atualizaClicadoSeta}
+                    focus = {props.focus}
             
                 />
             </div>
@@ -60,6 +72,8 @@ export default function Bloco(props) {
                     objeto = {props.data.tabuleiro[(props.blocoi * 3 + 2).toString() + (props.blocoj*3).toString() - (props.blocoi * 3 + 2)]}
                     atualizaClicado={props.atualizaClicado}
                     atualizaValor = {props.atualizaValor}
+                    atualizaClicadoSeta = {props.atualizaClicadoSeta}
+                    focus = {props.focus}
                 />
 
                 <Quadrado 
@@ -67,6 +81,8 @@ export default function Bloco(props) {
                     objeto = {props.data.tabuleiro[(props.blocoi * 3 + 2).toString() + (props.blocoj*3 + 1).toString() - (props.blocoi * 3 + 2)]}
                     atualizaClicado={props.atualizaClicado}
                     atualizaValor = {props.atualizaValor}
+                    atualizaClicadoSeta = {props.atualizaClicadoSeta}
+                    focus = {props.focus}
                 />
                 
                 <Quadrado 
@@ -74,6 +90,8 @@ export default function Bloco(props) {
                     objeto = {props.data.tabuleiro[(props.blocoi * 3 + 2).toString() + (props.blocoj*3 + 2).toString() - (props.blocoi * 3 + 2)]}
                     atualizaClicado={props.atualizaClicado}
                     atualizaValor = {props.atualizaValor}
+                    atualizaClicadoSeta = {props.atualizaClicadoSeta}
+                    focus = {props.focus}
                 />
             </div>
             

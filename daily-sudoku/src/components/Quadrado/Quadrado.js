@@ -2,12 +2,6 @@ import React, { useState } from "react"
 import "./Quadrado.css"
 
 export default function Quadrado(props) {
-    // const indice = props.id[0].toString() + props.id[1].toString() - props.id[0]
-    
-    // {props.valor ? props.valor : ""}
-    
-    // console.log(props.objeto)
-    
 
     let classeCssContainer = "";
     if (props.objeto.clicado){
@@ -16,34 +10,51 @@ export default function Quadrado(props) {
         classeCssContainer = "quadrado-container"
     }
 
+    let styles = {
+        backgroundColor: props.objeto.errado ? "#EE2A5D" : "transparent"
+    }
+
     let focus 
     if (props.objeto.clicado){
         focus = "autofocus"
+    }
+    if (props.focus === props.objeto.id && document.getElementById(`input-${props.objeto.id}`)){
+        document.getElementById(`input-${props.objeto.id}`).focus()
     }
     
     
     return (
         <div 
-            onClick={(event) => props.atualizaClicado(event, props.objeto.id)}  
+            onClick={(event) => props.atualizaClicado(event, props.objeto.id)} 
+            onKeyDown={(event) => {
+                console.log(`Quem chamou foi o ${props.objeto.id}`)
+                props.atualizaClicadoSeta(event, props.objeto.id, props.objeto["linha-coluna"])
+            }} 
             className={classeCssContainer}
+            style={styles}
         >
-            {props.objeto.clicado ? 
+            <h4>{props.objeto.id}</h4>
             <input 
                 className="form-quadrado"
                 type="number"
-                onChange= {(event) => props.atualizaValor(event, props.objeto.id)}
+                onChange= {(event) => props.atualizaValor(event, props.objeto)}
                 value={props.objeto.valor ? props.objeto.valor : ""} 
-                autoFocus
+                // value = {props.objeto.id}
+                autoFocus = {props.focus === props.objeto.id}
+                id = {`input-${props.objeto.id}`}
             /> 
+            {/* {props.objeto.clicado ? 
+
             : 
             <input 
                 className="form-quadrado"
                 type="number"
-                onChange= {(event) => props.atualizaValor(event, props.objeto.id)}
+                onChange= {(event) => props.atualizaValor(event, props.objeto)}
                 value={props.objeto.valor ? props.objeto.valor : ""} 
-            />}
+                // value = {props.objeto.id}
+            />} */}
             
-            {/* <h1 className="conteudo-quadrado">{props.objeto.valor}</h1> */}
+            
         </div>
     )
 }
