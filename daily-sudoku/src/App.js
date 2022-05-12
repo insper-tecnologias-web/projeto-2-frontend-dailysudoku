@@ -51,7 +51,7 @@ function App() {
 
 
     
-      } else if (storageItem.substring(0,5) === 'lista' && jogo) {
+      } else if (storageItem.substring(0,5) === 'lista' && jogo) {  
 
           let jogosJogados = JSON.parse(localStorage.getItem(storageItem))
 
