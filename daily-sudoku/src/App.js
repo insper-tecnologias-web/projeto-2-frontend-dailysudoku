@@ -10,27 +10,126 @@ import Popup from './components/Popup/Popup';
 
 function App() {
 
+  const [tresJogos, setTresJogos] = useState({});
   const [jogo, setJogo] = useState(null);
   const [sudoku, setSudoku] = useState(false);
   const [popup, setPopup] = useState(false);
-  //const [cursor, setCursor] = useState(0);
-
   const [focus, setFocus] = useState(0);
+  const [listaErrados, setListaErrados] = useState([]);
+  const [dificuldade, setDificuldade] = useState("easy");
+
+  useEffect(() => {
+    // localStorage.clear();
+    const listaStorage = ['vitoriasEasy', 'sequenciaEasy', 'listaJaJogadosEasy',
+                      'vitoriasMedium', 'sequenciaMedium', 'listaJaJogadosMedium',
+                      'vitoriasHard', 'sequenciaHard', 'listaJaJogadosHard',]
+        
+    for (let storageItem of listaStorage){
+      
+      if (!localStorage.getItem(storageItem)){
+
+        if (storageItem.substring(0,5) === 'lista' && jogo){
+          if (jogo.dificuldade === "easy" && storageItem === 'listaJaJogadosEasy'){
+            let jogosJogados = [jogo.id]
+            localStorage.setItem(storageItem,JSON.stringify(jogosJogados))
+          }
+          else if (jogo.dificuldade === "medium" && storageItem === 'listaJaJogadosMedium'){
+            let jogosJogados = [jogo.id]
+            localStorage.setItem(storageItem,JSON.stringify(jogosJogados))
+          }
+          else if (jogo.dificuldade === "hard" && storageItem === 'listaJaJogadosHard'){
+            let jogosJogados = [jogo.id]
+            localStorage.setItem(storageItem,JSON.stringify(jogosJogados))
+          } else{
+            let jogosJogados = []
+            localStorage.setItem(storageItem,JSON.stringify(jogosJogados))
+          }
+          
+        } else {
+          localStorage.setItem(storageItem, 0)
+        }
 
 
-  console.log(`focus ${focus}`)
-  // if (jogo){
-  //   console.log(jogo.tabuleiro)
-  // }
+    
+      } else if (storageItem.substring(0,5) === 'lista' && jogo) {
+
+          let jogosJogados = JSON.parse(localStorage.getItem(storageItem))
+
+          if (jogo.dificuldade === "easy" && storageItem === 'listaJaJogadosEasy' && !jogosJogados.includes(jogo.id)){
+            jogosJogados.push(jogo.id)
+            localStorage.setItem(storageItem,JSON.stringify(jogosJogados))
+          }
+          else if (jogo.dificuldade === "medium" && storageItem === 'listaJaJogadosMedium' && !jogosJogados.includes(jogo.id)){
+            jogosJogados.push(jogo.id)
+            localStorage.setItem(storageItem,JSON.stringify(jogosJogados))
+          }
+          else if (jogo.dificuldade === "hard" && storageItem === 'listaJaJogadosHard' && !jogosJogados.includes(jogo.id)){
+            jogosJogados.push(jogo.id)
+            localStorage.setItem(storageItem,JSON.stringify(jogosJogados))
+          }
+
+      }
+      console.log(`${storageItem}: ${localStorage.getItem(storageItem)}`);
+      }
+  }, [tresJogos])
+
+  if (jogo){
+    console.log(`jogo.id: ${jogo.id}`)
+  }
   
   useEffect(() => {
     
     axios
-      .get("http://127.0.0.1:8000/api/sudoku/1/")
+      .get("http://127.0.0.1:8000/api/sudoku/ultimo-jogo/easy/")
       .then((res) => {
-        setJogo(res.data);
+        setTresJogos(prevJogos => ({
+          ...prevJogos,
+          easy: res.data 
+        }));
+      }).then(
+        axios
+          .get("http://127.0.0.1:8000/api/sudoku/ultimo-jogo/medium/")
+          .then((res) => {
+            setTresJogos(prevJogos => ({
+              ...prevJogos,
+              medium: res.data 
+            }));
+        })
+        ).then(
+          axios
+            .get("http://127.0.0.1:8000/api/sudoku/ultimo-jogo/hard/")
+            .then((res) => {
+              setTresJogos(prevJogos => ({
+                ...prevJogos,
+                hard: res.data 
+              }));
+            }))
+      
+      }, []);
+  
+
+  useEffect(() => {
+    if (!jogo){
+      setJogo(tresJogos[dificuldade])
+    }
+  }, [tresJogos]);
+ 
+
+  useEffect(() => {
+    if (Object.keys(tresJogos).length === 3){
+      setFocus(tresJogos[dificuldade].ultimo_clicado);
+      setTresJogos(prevTresJogos => {
+        return ({
+          ...prevTresJogos,
+          [jogo.dificuldade]: jogo
+        })
+        
       })
-    }, []);
+      setJogo(tresJogos[dificuldade])
+      console.log("chamei use effect")
+    }
+    
+  }, [dificuldade])
 
   useEffect(() => {
       if (jogo){
@@ -42,9 +141,12 @@ function App() {
         
         setSudoku(true);
         setPopup(true);
+
         console.log("venceu!")
+        
       } 
     }, [jogo])
+    
 
     useEffect(() => {
       if (sudoku) {
@@ -56,16 +158,36 @@ function App() {
               tabuleiro: prevJogo.tabuleiro.map(obj => {           
                 return {...obj, fixo: true, clicado: false}
               }),
-              
+              venceu: true,
               ultimo_clicado : -1
             }
           )
         })
-      } 
+      }
+      let vitorias = localStorage.getItem('vitorias')
+      if (jogo && !jogo.venceu){
+        localStorage.setItem('vitorias', parseInt(vitorias) + 1)
+        vitorias = localStorage.getItem('vitorias')
+      }
+      
+      console.log(`vitorias ${vitorias}`)
+      
     }, [sudoku])
 
   function closeModal(){
     setPopup(false);
+  }
+
+  function mudaDificuldade(novaDificuldade){
+    setDificuldade(novaDificuldade);
+    // console.log(novaDificuldade);
+    // console.log(`Quantidade de keys em tres jogos: ${Object.keys(tresJogos).length}`)
+    // console.log(`Tres jogos easy: ${tresJogos.easy}`)
+    // console.log(tresJogos.easy)
+    // console.log(`Tres jogos medium: ${tresJogos.medium}`)
+    // console.log(tresJogos.medium)
+    // console.log(`Tres jogos hard: ${tresJogos.hard}`)
+    // console.log(tresJogos.hard)
   }
 
   function atualizaClicado(event, id) {
@@ -108,8 +230,6 @@ function App() {
   
   function verificaNovoCLicado(key, id, linhaColuna){
     const [i, j] = linhaColuna;
-    // console.log(`i: ${i}, j: ${j}`);
-    // console.log(`typeof(i): ${typeof(i)}, typeof(j): ${typeof(j)}`);
 
     switch (key) {
       case 'ArrowLeft':
@@ -137,24 +257,27 @@ function App() {
   }
 }
 
-function onClickFocus(){}
-
   function atualizaValor(event, objeto){
-    // console.log("atualiza valor")
+    
     var novoValor = event.target.value;
 
     const tabuleiroVerifica = jogo.tabuleiro.map(objMap => {
-      if (objMap.id === objeto.id){
+      if (objMap.id === objeto.id && !objMap.fixo){
         return {...objMap, valor: parseInt(novoValor.charAt(novoValor.length - 1))}
       } else{
         return objMap;
       }
     })
 
-    const listaErrados = verificaResposta(novoValor, objeto, tabuleiroVerifica)
-    // console.log(listaErrados)
-
-    // console.log(tabuleiroVerifica)
+    let novoObjeto
+    if (!objeto.fixo){
+      novoObjeto = {...objeto, valor: parseInt(novoValor.charAt(novoValor.length - 1))}
+    } else{
+      novoObjeto = objeto
+    }
+    
+    const listaErrados = atualizaErros(novoObjeto, tabuleiroVerifica)
+    setListaErrados(listaErrados);
 
     setJogo((prevJogo) => {
       return (
@@ -178,66 +301,65 @@ function onClickFocus(){}
       )
     })  
 
-  
-    
-    
   }
 
-  function verificaResposta(novoValor,objeto, tabuleiroAtualizado){
+  function atualizaErros(objeto, tabuleiroAtualizado){
     
-    let listaErrados = []
-    // console.log("Verificando para");
-    // console.log(objeto);
-    let [i, j] = objeto["linha-coluna"];
-    novoValor = parseInt(novoValor.charAt(novoValor.length - 1));
+    let objetosParaVerificar = listaErrados.map(idErrado => tabuleiroAtualizado[idErrado])
+    objetosParaVerificar.push(objeto)
 
-    //Verifica linha
-    // console.log(`*****************************************`)
-    for (let objetoFor of tabuleiroAtualizado) {
-
-      if (objeto.id === objetoFor.id){
-        continue;
-      }
-
-      else if ((objetoFor["linha-coluna"][0] === i || objetoFor["linha-coluna"][1] === j) && objetoFor.valor === novoValor) {
-        listaErrados.push(objetoFor.id);
-      }
+    let listaNovosErros = []
     
-      else if((Math.floor(objetoFor["linha-coluna"][0] / 3) === Math.floor(i / 3) 
-      && Math.floor(objetoFor["linha-coluna"][1] / 3) === Math.floor(j / 3)) 
-      && objetoFor.valor === novoValor) {
-        listaErrados.push(objetoFor.id)
-      }
+    for (let objetoParaVerificar of objetosParaVerificar){
+      // console.log(`verificando para ${objetoParaVerificar.id}`);
+      // console.log(`********************`);
+      let [i, j] = objetoParaVerificar["linha-coluna"];
+      let valorVerificado = objetoParaVerificar.valor
+
+      let tamanhoInicial = listaNovosErros.length
+
+      for (let objetoFor of tabuleiroAtualizado) {
+        
+        // Pula ele mesmo
+        if (objetoParaVerificar.id === objetoFor.id){
+          continue;
+        }
+
+        // verifica linha e coluna
+        else if ((objetoFor["linha-coluna"][0] === i || objetoFor["linha-coluna"][1] === j) && objetoFor.valor === valorVerificado && valorVerificado !== 0) {
+          console.log(`Entrei no erro linha e coluna com ${objetoFor.id}`)
+          if (!listaNovosErros.includes(objetoParaVerificar.id)){
+            listaNovosErros.push(objetoParaVerificar.id)
+          }
+          if (!listaNovosErros.includes(objetoFor.id)){
+            listaNovosErros.push(objetoFor.id)
+          }
+          console.log(`lista novos erros: ${listaNovosErros}`)
+        }
       
-      
-      // console.log(`-----------------------------------------------`)
-      // console.log(`objetoFor["linha-coluna"]: ${objetoFor["linha-coluna"]}`)
-      // console.log(`objetoFor.id: ${objetoFor.id}`)
-      // console.log(`objetoFor.valor: ${objetoFor.valor}`)
-      // console.log(`novoValor: ${novoValor}`)
+        // Verifica bloco
+        else if((Math.floor(objetoFor["linha-coluna"][0] / 3) === Math.floor(i / 3) 
+        && Math.floor(objetoFor["linha-coluna"][1] / 3) === Math.floor(j / 3)) 
+        && objetoFor.valor === valorVerificado && valorVerificado !== 0) {
+          console.log(`Entrei no erro bloco com ${objetoFor.id}`)
+          if (!listaNovosErros.includes(objetoParaVerificar.id)){
+            listaNovosErros.push(objetoParaVerificar.id)
+          }
+          if (!listaNovosErros.includes(objetoFor.id)){
+            listaNovosErros.push(objetoFor.id)
+          }
+          // console.log(`lista novos erros: ${listaNovosErros}`)
+        }
+      }
+    }
 
-    
-      // console.log(`i:${i} j: ${j}`)  
-      // console.log((objetoFor["linha-coluna"][0] % 3 === i % 3 && objetoFor["linha-coluna"][1] % 3 === j % 3) && objetoFor.valor === novoValor)
-      // console.log(`objetoFor["linha-coluna"][0] % 3: ${Math.floor(objetoFor["linha-coluna"][0] / 3)}`)
-      // console.log(`i % 3: ${Math.floor(i / 3)}`)
-      // console.log(`objetoFor["linha-coluna"][1] % 3: ${Math.floor(objetoFor["linha-coluna"][1] / 3)}`)
-      // console.log(`j % 3: ${Math.floor(j / 3)}`)
-
-  }
-  
-  if (listaErrados.length > 0){
-    listaErrados.push(objeto.id)
-  }
-
-
-  return listaErrados;
+    return listaNovosErros;
 }
 
   
   return jogo && (
     <div className="App"> 
-      <Header/> 
+      <Header mudaDificuldade = {mudaDificuldade} dificuldade = {dificuldade}/> 
       <div className = "app-container">
         <Tabuleiro data={jogo} atualizaClicado = {atualizaClicado} atualizaValor = {atualizaValor} atualizaClicadoSeta = {atualizaClicadoSeta} focus = {focus}/>
       </div>
@@ -248,4 +370,3 @@ function onClickFocus(){}
 }
 
 export default App;
-

@@ -6,6 +6,7 @@ import axios from "axios";
 export default function ControlledPopup(props){
     const [piada, setPiada] = useState(null);
     const sequencia = 0;
+
     
     useEffect(() => {
     
@@ -26,12 +27,12 @@ export default function ControlledPopup(props){
 
         <div className = "estatisticas-container">
             <div className = "estatistica">
-                <h2 className="estatistica-valor">{sequencia}</h2>
+                <h2 className="estatistica-valor">{localStorage.getItem('vitorias')}</h2>
                 <h3>GAMES</h3>
             </div>
 
             <div className = "estatistica">
-                <h2 className="estatistica-valor">{sequencia}</h2>
+                <h2 className="estatistica-valor">{localStorage.getItem('vitorias')}</h2>
                 <h3>% OF WINS</h3>
             </div>
 

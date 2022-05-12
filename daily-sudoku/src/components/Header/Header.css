@@ -1,5 +1,5 @@
 .header-container{
-    color: white;
+    color: rgb(255, 255, 255);
     display: flex;
     flex-direction: row;
     width:100%;
@@ -19,7 +19,8 @@
 }
 .botao-dificuldade{
     font-size: 1.3rem;
-    
+    cursor: pointer;
+    color: rgba(217, 217, 217, 0.815)
 }
 
 .header-titulo{
