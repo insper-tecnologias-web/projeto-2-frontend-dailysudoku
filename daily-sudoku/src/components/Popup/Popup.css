@@ -1,17 +1,22 @@
-.overlay{
+.overlay {
     position: fixed;
     width: 100%;
     height: 100%;
     display: block;
     top: 4.75rem;
     left: 0;
-    background-color: rgba(0,0,0,.3); /*this sets the slightly see-through black*/
+    background-color: rgba(
+        0,
+        0,
+        0,
+        0.3
+    ); /*this sets the slightly see-through black*/
     z-index: 100; /*Make this less than the existing popup div*/
-    font-family: 'Josefin Sans', sans-serif;
+    font-family: "Josefin Sans", sans-serif;
     font-weight: 400;
 }
 
-.popup-container{
+.popup-container {
     background-color: #414042;
     position: absolute;
     top: 45%;
@@ -23,23 +28,23 @@
     border-radius: 5rem;
 }
 
-.close{
+.close {
     position: absolute;
     right: 7%;
     top: 1%;
     font-size: 2.5rem;
-    cursor:default;
+    cursor: default;
 }
 
-.estatisticas-container{
+.estatisticas-container {
     display: flex;
     flex-direction: row;
     flex-grow: 1;
     justify-content: flex-start;
 }
 
-.estatistica{
-    width: 33%;
+.estatistica {
+    width: 25%;
 }
 
 .setup {
