@@ -1,10 +1,37 @@
 import React, { useState, useEffect } from "react";
 import "./Popup.css";
 import axios from "axios";
+import Countdown from "react-countdown";
 
 export default function ControlledPopup(props) {
+    // const [tempoRestante, setTempoRestante] = useState("");
+
     function capitalizeFirstLetter(string) {
         return string.charAt(0).toUpperCase() + string.slice(1);
+    }
+
+    var actualTime = new Date(Date.now());
+
+    var endOfDay = new Date(
+        actualTime.getFullYear(),
+        actualTime.getMonth(),
+        actualTime.getDate() + 1,
+        0,
+        0,
+        0
+    );
+
+    var timeRemaining = endOfDay.getTime() - actualTime.getTime();
+
+    function renderer({ hours, minutes, seconds, completed }) {
+        return (
+            <div className="countdown">
+                <h1 className="proximo">Next game in:</h1>
+                <span className="countdown-span">
+                    {hours}:{minutes}:{seconds}
+                </span>
+            </div>
+        );
     }
 
     const [piada, setPiada] = useState(null);
@@ -13,13 +40,13 @@ export default function ControlledPopup(props) {
         `listaJaJogados${capitalizeFirstLetter(props.dificuldade)}`,
     ];
 
-    console.log(listaStorage[0], listaStorage[1]);
+    // console.log(listaStorage[0], listaStorage[1]);
     let listaVitorias = JSON.parse(localStorage.getItem(listaStorage[0]));
     let listaJaJogados = JSON.parse(localStorage.getItem(listaStorage[1]));
 
-    console.log("listas do local:");
-    console.log(listaVitorias);
-    console.log(listaJaJogados);
+    // console.log("listas do local:");
+    // console.log(listaVitorias);
+    // console.log(listaJaJogados);
 
     let jogos = listaJaJogados.length;
     let vitorias = Math.round((listaVitorias.length * 100) / jogos);
@@ -91,6 +118,8 @@ export default function ControlledPopup(props) {
 
                     <h1 className="setup">{piada.setup}</h1>
                     <h2 className="punchline">{piada["punch_line"]}</h2>
+                    {/* <h2 className="tempoRestante">{tempoRestante}</h2> */}
+                    <Countdown date={endOfDay} renderer={renderer} />
                 </div>
             </div>
         )

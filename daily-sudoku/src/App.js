@@ -1,5 +1,5 @@
 import logo from "./logo.svg";
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
 
 import "./App.css";
 import axios from "axios";
@@ -17,19 +17,27 @@ function App() {
         medium: false,
         hard: false,
     });
-    const [popup, setPopup] = useState(false);
+    const [popup, setPopup] = useState(true);
     const [focus, setFocus] = useState(0);
     const [listaErrados, setListaErrados] = useState([]);
     const [dificuldade, setDificuldade] = useState("easy");
+    const [desenhando, setDesenhando] = useState(true);
 
     // localStorage.clear();
+    // console.log(localStorage.getItem("jogoEasy"));
+    // console.log(localStorage.getItem("jogoMedium"));
+    // console.log(localStorage.getItem("jogoHard"));
 
+    console.log(desenhando);
     useEffect(() => {
         const listaStorage = [
+            "jogoEasy",
             "listaVitoriasEasy",
             "listaJaJogadosEasy",
+            "jogoMedium",
             "listaVitoriasMedium",
             "listaJaJogadosMedium",
+            "jogoHard",
             "listaVitoriasHard",
             "listaJaJogadosHard",
         ];
@@ -78,7 +86,10 @@ function App() {
                 } else if (storageItem.substring(0, 13) === "listaVitorias") {
                     localStorage.setItem(storageItem, JSON.stringify([]));
 
-                    //Lógica para localstorage da sequencia
+                    //Lógica para jogo do dia
+                } else if (storageItem.substring(0, 4) === "jogo") {
+                    // console.log("criando jogo");
+                    localStorage.setItem(storageItem, JSON.stringify({}));
                 }
 
                 //Criados
@@ -89,6 +100,8 @@ function App() {
                 let jogosJogados = JSON.parse(
                     localStorage.getItem(storageItem)
                 );
+                // console.log(storageItem);
+                // console.log(jogosJogados);
 
                 if (
                     jogo.dificuldade === "easy" &&
@@ -122,7 +135,7 @@ function App() {
                     );
                 }
             }
-            console.log(`${storageItem}: ${localStorage.getItem(storageItem)}`);
+            // console.log(`${storageItem}: ${localStorage.getItem(storageItem)}`);
         }
     }, [tresJogos, dificuldade]);
 
@@ -135,39 +148,91 @@ function App() {
         axios
             .get("http://127.0.0.1:8000/api/sudoku/ultimo-jogo/easy/")
             .then((res) => {
-                setTresJogos((prevJogos) => ({
-                    ...prevJogos,
-                    easy: res.data,
-                }));
+                if (
+                    !JSON.parse(localStorage.getItem("jogoEasy")) ||
+                    JSON.parse(localStorage.getItem("jogoEasy")).id !==
+                        res.data.id
+                ) {
+                    // console.log("entrei no if do ls nao criado");
+                    setTresJogos((prevJogos) => ({
+                        ...prevJogos,
+                        easy: res.data,
+                    }));
+                    // console.log(localStorage.getItem("jogoEasy"));
+                    localStorage.setItem("jogoEasy", JSON.stringify(res.data));
+                    // console.log(localStorage.getItem("jogoEasy"));
+                } else {
+                    // console.log("entrei no else");
+                    setTresJogos((prevJogos) => ({
+                        ...prevJogos,
+                        easy: JSON.parse(localStorage.getItem("jogoEasy")),
+                    }));
+                }
             })
             .then(
                 axios
                     .get("http://127.0.0.1:8000/api/sudoku/ultimo-jogo/medium/")
                     .then((res) => {
-                        setTresJogos((prevJogos) => ({
-                            ...prevJogos,
-                            medium: res.data,
-                        }));
+                        if (
+                            !JSON.parse(localStorage.getItem("jogoMedium")) ||
+                            JSON.parse(localStorage.getItem("jogoMedium"))
+                                .id !== res.data.id
+                        ) {
+                            setTresJogos((prevJogos) => ({
+                                ...prevJogos,
+                                medium: res.data,
+                            }));
+                            localStorage.setItem(
+                                "jogoMedium",
+                                JSON.stringify(res.data)
+                            );
+                        } else {
+                            setTresJogos((prevJogos) => ({
+                                ...prevJogos,
+                                medium: JSON.parse(
+                                    localStorage.getItem("jogoMedium")
+                                ),
+                            }));
+                        }
                     })
             )
             .then(
                 axios
                     .get("http://127.0.0.1:8000/api/sudoku/ultimo-jogo/hard/")
                     .then((res) => {
-                        setTresJogos((prevJogos) => ({
-                            ...prevJogos,
-                            hard: res.data,
-                        }));
+                        if (
+                            !JSON.parse(localStorage.getItem("jogoHard")) ||
+                            JSON.parse(localStorage.getItem("jogoHard")).id !==
+                                res.data.id
+                        ) {
+                            setTresJogos((prevJogos) => ({
+                                ...prevJogos,
+                                hard: res.data,
+                            }));
+                            localStorage.setItem(
+                                "jogoHard",
+                                JSON.stringify(res.data)
+                            );
+                        } else {
+                            setTresJogos((prevJogos) => ({
+                                ...prevJogos,
+                                hard: JSON.parse(
+                                    localStorage.getItem("jogoHard")
+                                ),
+                            }));
+                        }
                     })
             );
     }, []);
 
+    //começar jogo
     useEffect(() => {
         if (!jogo) {
             setJogo(tresJogos[dificuldade]);
         }
     }, [tresJogos]);
 
+    //mudar jogo conforme dificuldade
     useEffect(() => {
         if (Object.keys(tresJogos).length === 3) {
             setFocus(tresJogos[dificuldade].ultimo_clicado);
@@ -182,7 +247,19 @@ function App() {
         }
     }, [dificuldade]);
 
+    // verifica se venceu e atualiza o local storage do jogo
     useEffect(() => {
+        function capitalizeFirstLetter(string) {
+            return string.charAt(0).toUpperCase() + string.slice(1);
+        }
+
+        if (jogo) {
+            localStorage.setItem(
+                `jogo${capitalizeFirstLetter(dificuldade)}`,
+                JSON.stringify(jogo)
+            );
+        }
+
         if (jogo) {
             for (let obj of jogo.tabuleiro) {
                 if (obj.valor !== obj.resposta) {
@@ -205,6 +282,7 @@ function App() {
 
     useEffect(() => {
         if (tresSudokus[dificuldade]) {
+            // venceu, logo todos os objetos sõa fixos
             setJogo((prevJogo) => {
                 return {
                     dificuldade: prevJogo.dificuldade,
@@ -217,29 +295,18 @@ function App() {
                     id: prevJogo.id,
                 };
             });
+            //atualiza localStorage, adicionando essa nova vitoria
             if (jogo && !jogo.venceu) {
                 let vitorias;
                 switch (dificuldade) {
                     case "easy":
-                        // console.log(localStorage.getItem("listaVitoriasEasy"));
-                        // console.log(
-                        //     typeof localStorage.getItem("listaVitoriasEasy")
-                        // );
-
                         vitorias = JSON.parse(
                             localStorage.getItem("listaVitoriasEasy")
                         );
-                        // console.log(`Vitorias após o parse:`);
-                        // console.log(vitorias);
-                        // console.log(typeof vitorias);
-                        // console.log(`Jogo id: ${jogo.id}`);
+
                         if (!vitorias.includes(jogo.id)) {
                             vitorias.push(jogo.id);
                         }
-
-                        // console.log(
-                        //     `Adiciona novo jogo as vitorias ${vitorias}`
-                        // );
                         localStorage.setItem(
                             "listaVitoriasEasy",
                             JSON.stringify(vitorias)
@@ -275,13 +342,6 @@ function App() {
                 }
             }
         }
-        // let vitorias = localStorage.getItem('vitorias')
-        // if (jogo && !jogo.venceu){
-        //   localStorage.setItem('vitorias', parseInt(vitorias) + 1)
-        //   vitorias = localStorage.getItem('vitorias')
-        // }
-
-        // console.log(`vitorias ${vitorias}`)
     }, [tresSudokus]);
 
     function closeModal() {
@@ -291,14 +351,6 @@ function App() {
     function mudaDificuldade(novaDificuldade) {
         setPopup(false);
         setDificuldade(novaDificuldade);
-        // console.log(novaDificuldade);
-        // console.log(`Quantidade de keys em tres jogos: ${Object.keys(tresJogos).length}`)
-        // console.log(`Tres jogos easy: ${tresJogos.easy}`)
-        // console.log(tresJogos.easy)
-        // console.log(`Tres jogos medium: ${tresJogos.medium}`)
-        // console.log(tresJogos.medium)
-        // console.log(`Tres jogos hard: ${tresJogos.hard}`)
-        // console.log(tresJogos.hard)
     }
 
     function atualizaClicado(event, id) {
@@ -371,7 +423,9 @@ function App() {
             if (objMap.id === objeto.id && !objMap.fixo) {
                 return {
                     ...objMap,
-                    valor: parseInt(novoValor.charAt(novoValor.length - 1)),
+                    valor: desenhando
+                        ? 0
+                        : parseInt(novoValor.charAt(novoValor.length - 1)),
                 };
             } else {
                 return objMap;
@@ -382,7 +436,9 @@ function App() {
         if (!objeto.fixo) {
             novoObjeto = {
                 ...objeto,
-                valor: parseInt(novoValor.charAt(novoValor.length - 1)),
+                valor: desenhando
+                    ? 0
+                    : parseInt(novoValor.charAt(novoValor.length - 1)),
             };
         } else {
             novoObjeto = objeto;
@@ -391,31 +447,64 @@ function App() {
         const listaErrados = atualizaErros(novoObjeto, tabuleiroVerifica);
         setListaErrados(listaErrados);
 
-        setJogo((prevJogo) => {
-            return {
-                dificuldade: prevJogo.dificuldade,
+        if (desenhando) {
+            novoValor = parseInt(novoValor.charAt(novoValor.length - 1));
+            setJogo((prevJogo) => {
+                return {
+                    dificuldade: prevJogo.dificuldade,
 
-                id: prevJogo.id,
+                    id: prevJogo.id,
 
-                tabuleiro: prevJogo.tabuleiro.map((objMap) => {
-                    let erradoIndividual = listaErrados.includes(objMap.id);
+                    tabuleiro: prevJogo.tabuleiro.map((objMap) => {
+                        let erradoIndividual = listaErrados.includes(objMap.id);
+                        if (objMap.id === objeto.id && !objMap.fixo) {
+                            return {
+                                ...objMap,
+                                valor: 0,
+                                errado: erradoIndividual,
+                                desenhando: desenhando,
+                                dic_desenhando: {
+                                    ...objMap.dic_desenhando,
+                                    [novoValor]:
+                                        !objMap.dic_desenhando[novoValor],
+                                },
+                            };
+                        } else {
+                            return { ...objMap, errado: erradoIndividual };
+                        }
+                    }),
 
-                    if (objMap.id === objeto.id && !objMap.fixo) {
-                        return {
-                            ...objMap,
-                            valor: parseInt(
-                                novoValor.charAt(novoValor.length - 1)
-                            ),
-                            errado: erradoIndividual,
-                        };
-                    } else {
-                        return { ...objMap, errado: erradoIndividual };
-                    }
-                }),
+                    ultimo_clicado: prevJogo.ultimo_clicado,
+                };
+            });
+        } else {
+            setJogo((prevJogo) => {
+                return {
+                    dificuldade: prevJogo.dificuldade,
 
-                ultimo_clicado: prevJogo.ultimo_clicado,
-            };
-        });
+                    id: prevJogo.id,
+
+                    tabuleiro: prevJogo.tabuleiro.map((objMap) => {
+                        let erradoIndividual = listaErrados.includes(objMap.id);
+
+                        if (objMap.id === objeto.id && !objMap.fixo) {
+                            return {
+                                ...objMap,
+                                valor: parseInt(
+                                    novoValor.charAt(novoValor.length - 1)
+                                ),
+                                errado: erradoIndividual,
+                                desenhando: desenhando,
+                            };
+                        } else {
+                            return { ...objMap, errado: erradoIndividual };
+                        }
+                    }),
+
+                    ultimo_clicado: prevJogo.ultimo_clicado,
+                };
+            });
+        }
     }
 
     function atualizaErros(objeto, tabuleiroAtualizado) {
@@ -447,16 +536,16 @@ function App() {
                     objetoFor.valor === valorVerificado &&
                     valorVerificado !== 0
                 ) {
-                    console.log(
-                        `Entrei no erro linha e coluna com ${objetoFor.id}`
-                    );
+                    // console.log(
+                    //     `Entrei no erro linha e coluna com ${objetoFor.id}`
+                    // );
                     if (!listaNovosErros.includes(objetoParaVerificar.id)) {
                         listaNovosErros.push(objetoParaVerificar.id);
                     }
                     if (!listaNovosErros.includes(objetoFor.id)) {
                         listaNovosErros.push(objetoFor.id);
                     }
-                    console.log(`lista novos erros: ${listaNovosErros}`);
+                    // console.log(`lista novos erros: ${listaNovosErros}`);
                 }
 
                 // Verifica bloco
@@ -484,6 +573,10 @@ function App() {
     }
     // const { width, height } = useWindowSize();
 
+    function atualizaDesenhando() {
+        setDesenhando((prevDesenhando) => !prevDesenhando);
+    }
+
     return (
         jogo && (
             <div className="App">
@@ -499,10 +592,27 @@ function App() {
                         atualizaClicadoSeta={atualizaClicadoSeta}
                         focus={focus}
                     />
+
+                    <img
+                        onClick={atualizaDesenhando}
+                        className="pencil"
+                        src={desenhando ? "/pencil2.png" : "/pencil.png"}
+                    />
                 </div>
+
                 {popup && (
                     <>
-                        <Confetti />
+                        <Confetti
+                            gravity={0.2}
+                            numberOfPieces={500}
+                            colors={[
+                                "#E8F9FD",
+                                "#79DAE8",
+                                "#0AA1DD",
+                                "#2155CD",
+                                "#FFD93D",
+                            ]}
+                        />
                         <Popup
                             closeModal={closeModal}
                             dificuldade={dificuldade}

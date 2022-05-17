@@ -3,7 +3,7 @@
     width: 100%;
     height: 100%;
     display: block;
-    top: 4.75rem;
+    top: 3rem;
     left: 0;
     background-color: rgba(
         0,
@@ -17,13 +17,15 @@
 }
 
 .popup-container {
+    display: flex;
+    flex-direction: column;
     background-color: #414042;
     position: absolute;
-    top: 45%;
+    top: 38%;
     left: 50%;
-    transform: translate(-50%, -50%);
-    width: 800px;
-    height: 800px;
+    transform: translate(-50%, -40%);
+    width: 40rem;
+    height: 38rem;
     color: white;
     border-radius: 5rem;
 }
@@ -32,7 +34,7 @@
     position: absolute;
     right: 7%;
     top: 1%;
-    font-size: 2.5rem;
+    font-size: 1.5rem;
     cursor: default;
 }
 
@@ -41,6 +43,7 @@
     flex-direction: row;
     flex-grow: 1;
     justify-content: flex-start;
+    font-size: 0.7rem;
 }
 
 .estatistica {
@@ -48,12 +51,28 @@
 }
 
 .setup {
-    margin-top: 5rem;
-    font-size: 3rem;
+    margin-top: 2rem;
+    font-size: 1.9rem;
     max-width: 100%;
     padding: 2rem;
 }
 
 .punchline {
-    padding: 2rem;
+    margin-bottom: 5.5rem;
+    font-size: 1.3rem;
+    padding-left: 1rem;
+    padding-right: 1rem;
+}
+
+.countdown {
+    justify-self: flex-end;
+    margin-bottom: 0.5rem;
+}
+
+.countdown-span {
+    font-size: 3rem;
+}
+
+.proximo {
+    font-size: 1.5rem;
 }
