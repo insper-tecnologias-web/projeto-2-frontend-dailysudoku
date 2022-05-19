@@ -1,55 +1,46 @@
-import React, { useState } from "react";
+import React from "react";
 import "./Quadrado.css";
 
 export default function Quadrado(props) {
-    if (props.focus === props.objeto.id) {
-        console.log(props.objeto);
-    }
-
-    let classeCssContainer = "";
-
+    // Muda as cores do background, fonte e borda dependendo se o valor e está errado e se o quadrado
+    // é fixo.
     let styles = {
-        backgroundColor: props.objeto.errado
-            ? "#d44a5b"
-            : // ? "#991425"
-              "transparent",
+        backgroundColor: props.objeto.errado ? "#d44a5b" : "transparent",
         color:
             !props.objeto.fixo && props.objeto.errado
                 ? "#000000"
                 : !props.objeto.fixo
                 ? "#00423F"
                 : "white",
-
-        borderColor: props.objeto.errado && "#9c2a38",
-        // borderColor: props.objeto.errado ? "" : props.objeto.clicado ? rgba(0, 0, 0, 0.247) : rgba(255, 255, 255, 0.26) ,
+        borderColor:
+            props.focus === props.objeto.id && props.objeto.errado
+                ? "#00000082"
+                : props.focus === props.objeto.id
+                ? "#0000003f"
+                : props.objeto.errado
+                ? "#9c2a38"
+                : "#ffffff42",
     };
 
-    let focus;
-    if (props.objeto.clicado) {
-        focus = "autofocus";
-    }
+    // Seta a propriedade focus da DOM se o estado do app focus aponta para o quadrado\
     if (
         props.focus === props.objeto.id &&
         document.getElementById(`input-${props.objeto.id}`)
     ) {
         document.getElementById(`input-${props.objeto.id}`).focus();
-        classeCssContainer = "quadrado-container-clicado";
-    } else {
-        classeCssContainer = "quadrado-container";
     }
 
     return (
         <div
             onClick={(event) => props.atualizaClicado(event, props.objeto.id)}
             onKeyDown={(event) => {
-                // console.log(`Quem chamou foi o ${props.objeto.id}`)
                 props.atualizaClicadoSeta(
                     event,
                     props.objeto.id,
                     props.objeto["linha-coluna"]
                 );
             }}
-            className={classeCssContainer}
+            className="quadrado-container"
             style={styles}
         >
             {/* <h4>{props.objeto.resposta}</h4> */}
@@ -96,22 +87,3 @@ export default function Quadrado(props) {
         </div>
     );
 }
-
-// function areEqual(prevProps, nextProps) {
-//     /*
-//     return true if passing nextProps to render would return
-//     the same result as passing prevProps to render,
-//     otherwise return false
-//     */
-
-//     if (
-//         prevProps.objeto.clicado !== nextProps.objeto.clicado ||
-//         prevProps.objeto.errado !== nextProps.objeto.errado ||
-//         prevProps.objeto.valor !== nextProps.objeto.valor ||
-//         prevProps.objeto.venceu !== nextProps.objeto.venceu ||
-//         prevProps.focus !== nextProps.focus
-//     ) {
-//         return false;
-//     }
-//     return true;
-// }

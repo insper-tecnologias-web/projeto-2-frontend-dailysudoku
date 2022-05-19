@@ -3,7 +3,6 @@ import React, { useState, useEffect } from "react";
 
 import "./App.css";
 import axios from "axios";
-import data from "./game.js";
 import Tabuleiro from "./components/Tabuleiro/Tabuleiro";
 import Header from "./components/Header/Header";
 import Popup from "./components/Popup/Popup";
@@ -24,11 +23,9 @@ function App() {
     const [desenhando, setDesenhando] = useState(false);
 
     // localStorage.clear();
-    // console.log(localStorage.getItem("jogoEasy"));
-    // console.log(localStorage.getItem("jogoMedium"));
-    // console.log(localStorage.getItem("jogoHard"));
 
-    console.log(desenhando);
+    // Use effect que inicia o local storage e atualiza e lista de jogos já jogados quando o jogador entra
+    // no site pela primeira vez
     useEffect(() => {
         const listaStorage = [
             "jogoEasy",
@@ -88,7 +85,6 @@ function App() {
 
                     //Lógica para jogo do dia
                 } else if (storageItem.substring(0, 4) === "jogo") {
-                    // console.log("criando jogo");
                     localStorage.setItem(storageItem, JSON.stringify({}));
                 }
 
@@ -100,8 +96,6 @@ function App() {
                 let jogosJogados = JSON.parse(
                     localStorage.getItem(storageItem)
                 );
-                // console.log(storageItem);
-                // console.log(jogosJogados);
 
                 if (
                     jogo.dificuldade === "easy" &&
@@ -144,25 +138,26 @@ function App() {
     //     console.log(jogo);
     // }
 
+    // Use effect que carrega o jogo no esta tresJogos. Sempre faz um get nos jogos easy, medium e hard no
+    // backend e verifica se o jogo está no localstorage. Se estiver carrega o do localstorage, se não carrega
+    // o novo jogo.
     useEffect(() => {
         axios
-            .get("https://fathomless-cove-20305.herokuapp.com/api/sudoku/ultimo-jogo/easy/")
+            .get(
+                "https://fathomless-cove-20305.herokuapp.com/api/sudoku/ultimo-jogo/easy/"
+            )
             .then((res) => {
                 if (
                     !JSON.parse(localStorage.getItem("jogoEasy")) ||
                     JSON.parse(localStorage.getItem("jogoEasy")).id !==
                         res.data.id
                 ) {
-                    // console.log("entrei no if do ls nao criado");
                     setTresJogos((prevJogos) => ({
                         ...prevJogos,
                         easy: res.data,
                     }));
-                    // console.log(localStorage.getItem("jogoEasy"));
                     localStorage.setItem("jogoEasy", JSON.stringify(res.data));
-                    // console.log(localStorage.getItem("jogoEasy"));
                 } else {
-                    // console.log("entrei no else");
                     setTresJogos((prevJogos) => ({
                         ...prevJogos,
                         easy: JSON.parse(localStorage.getItem("jogoEasy")),
@@ -171,7 +166,9 @@ function App() {
             })
             .then(
                 axios
-                    .get("https://fathomless-cove-20305.herokuapp.com/api/sudoku/ultimo-jogo/medium/")
+                    .get(
+                        "https://fathomless-cove-20305.herokuapp.com/api/sudoku/ultimo-jogo/medium/"
+                    )
                     .then((res) => {
                         if (
                             !JSON.parse(localStorage.getItem("jogoMedium")) ||
@@ -198,7 +195,9 @@ function App() {
             )
             .then(
                 axios
-                    .get("https://fathomless-cove-20305.herokuapp.com/api/sudoku/ultimo-jogo/hard/")
+                    .get(
+                        "https://fathomless-cove-20305.herokuapp.com/api/sudoku/ultimo-jogo/hard/"
+                    )
                     .then((res) => {
                         if (
                             !JSON.parse(localStorage.getItem("jogoHard")) ||
@@ -225,14 +224,14 @@ function App() {
             );
     }, []);
 
-    //começar jogo
+    //Inicia o jogo atual com a dificuldade easy
     useEffect(() => {
         if (!jogo) {
             setJogo(tresJogos[dificuldade]);
         }
     }, [tresJogos]);
 
-    //mudar jogo conforme dificuldade
+    //Muda o jogo atual conforme dificuldade
     useEffect(() => {
         if (Object.keys(tresJogos).length === 3) {
             setFocus(tresJogos[dificuldade].ultimo_clicado);
@@ -243,11 +242,11 @@ function App() {
                 };
             });
             setJogo(tresJogos[dificuldade]);
-            // console.log("chamei use effect");
         }
     }, [dificuldade]);
 
-    // verifica se venceu e atualiza o local storage do jogo
+    // A cada mudança no jogo, atualiza o localstorage do jogo dessa dificuldade e verifica se o jogo
+    // foi ganho.
     useEffect(() => {
         function capitalizeFirstLetter(string) {
             return string.charAt(0).toUpperCase() + string.slice(1);
@@ -260,9 +259,9 @@ function App() {
             );
         }
 
-        if (jogo) {
+        if (jogo && listaErrados.length === 0) {
             for (let obj of jogo.tabuleiro) {
-                if (obj.valor !== obj.resposta) {
+                if (obj.valor === 0) {
                     return;
                 }
             }
@@ -275,11 +274,10 @@ function App() {
             }
 
             setPopup(true);
-
-            // console.log("venceu!");
         }
     }, [jogo]);
 
+    // Caso o jogo seja vencido, atualiza a UI e o localstorage
     useEffect(() => {
         if (tresSudokus[dificuldade]) {
             // venceu, logo todos os objetos sõa fixos
@@ -344,18 +342,22 @@ function App() {
         }
     }, [tresSudokus]);
 
+    // fecha o popup
     function closeModal() {
         setPopup(false);
     }
 
+    // seta a nova dificuldade a partir do clique no header
     function mudaDificuldade(novaDificuldade) {
         setPopup(false);
         setDificuldade(novaDificuldade);
     }
 
+    // muda o quadrado focado a partir do clique do mouse
     function atualizaClicado(event, id) {
         setFocus(id);
 
+        // garante que só atualiza o clque quando o jogo não foi vencido
         if (!tresSudokus[dificuldade]) {
             setJogo((prevJogo) => {
                 return {
@@ -378,6 +380,7 @@ function App() {
         }
     }
 
+    // atualiza o quadrado focado a partir das setas
     function atualizaClicadoSeta(event, id, linhaColuna) {
         let arrows = ["ArrowLeft", "ArrowUp", "ArrowRight", "ArrowDown", "0"];
 
@@ -387,6 +390,7 @@ function App() {
         }
     }
 
+    // helper function que verifica qual será o novo quadrado selecionado a partir da seta clicada
     function verificaNovoCLicado(key, id, linhaColuna) {
         const [i, j] = linhaColuna;
 
@@ -416,9 +420,12 @@ function App() {
         }
     }
 
+    // função que atualiza o valor do quadrado
     function atualizaValor(event, objeto) {
         var novoValor = event.target.value;
 
+        // Tabuleiro a ser verificado com o valor novo do quadrado mudado.
+        // Garante que se estiver desenhando o quadrado não terá erro no quadrado mudado
         const tabuleiroVerifica = jogo.tabuleiro.map((objMap) => {
             if (objMap.id === objeto.id && !objMap.fixo) {
                 return {
@@ -444,9 +451,14 @@ function App() {
             novoObjeto = objeto;
         }
 
+        // atualiza a lista dos quadrados errados
         const listaErrados = atualizaErros(novoObjeto, tabuleiroVerifica);
         setListaErrados(listaErrados);
 
+        // Se estiver desenhando, atualiza o dicionario de desenhos, se não atualiza o valor do quadrado.
+        // Sempre muda os erro individuais de todos quadrados para carregar os erros de mudanças passadas.
+        // Só muda o atributo desenhando do quadrado que está sendo atualizado para que assim seja possivel
+        // manter quadrados com desenho e valor real ao mesmo tempo.
         if (desenhando) {
             novoValor = parseInt(novoValor.charAt(novoValor.length - 1));
             setJogo((prevJogo) => {
@@ -507,6 +519,7 @@ function App() {
         }
     }
 
+    // Helper function utilizada para verificar os erros no tabuleiro
     function atualizaErros(objeto, tabuleiroAtualizado) {
         let objetosParaVerificar = listaErrados.map(
             (idErrado) => tabuleiroAtualizado[idErrado]
@@ -516,8 +529,6 @@ function App() {
         let listaNovosErros = [];
 
         for (let objetoParaVerificar of objetosParaVerificar) {
-            // console.log(`verificando para ${objetoParaVerificar.id}`);
-            // console.log(`********************`);
             let [i, j] = objetoParaVerificar["linha-coluna"];
             let valorVerificado = objetoParaVerificar.valor;
 
@@ -536,16 +547,12 @@ function App() {
                     objetoFor.valor === valorVerificado &&
                     valorVerificado !== 0
                 ) {
-                    // console.log(
-                    //     `Entrei no erro linha e coluna com ${objetoFor.id}`
-                    // );
                     if (!listaNovosErros.includes(objetoParaVerificar.id)) {
                         listaNovosErros.push(objetoParaVerificar.id);
                     }
                     if (!listaNovosErros.includes(objetoFor.id)) {
                         listaNovosErros.push(objetoFor.id);
                     }
-                    // console.log(`lista novos erros: ${listaNovosErros}`);
                 }
 
                 // Verifica bloco
@@ -557,22 +564,20 @@ function App() {
                     objetoFor.valor === valorVerificado &&
                     valorVerificado !== 0
                 ) {
-                    console.log(`Entrei no erro bloco com ${objetoFor.id}`);
                     if (!listaNovosErros.includes(objetoParaVerificar.id)) {
                         listaNovosErros.push(objetoParaVerificar.id);
                     }
                     if (!listaNovosErros.includes(objetoFor.id)) {
                         listaNovosErros.push(objetoFor.id);
                     }
-                    // console.log(`lista novos erros: ${listaNovosErros}`)
                 }
             }
         }
 
         return listaNovosErros;
     }
-    // const { width, height } = useWindowSize();
 
+    // função chamada no clique da imagem de desenho
     function atualizaDesenhando() {
         setDesenhando((prevDesenhando) => !prevDesenhando);
     }

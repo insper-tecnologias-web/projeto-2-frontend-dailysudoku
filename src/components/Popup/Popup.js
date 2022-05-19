@@ -4,15 +4,15 @@ import axios from "axios";
 import Countdown from "react-countdown";
 
 export default function ControlledPopup(props) {
-    // const [tempoRestante, setTempoRestante] = useState("");
+    const [piada, setPiada] = useState(null);
 
+    // Helper function
     function capitalizeFirstLetter(string) {
         return string.charAt(0).toUpperCase() + string.slice(1);
     }
-    // console.log("rederizei")
 
+    // Variavéis para o contador
     var actualTime = new Date(Date.now());
-
     var endOfDay = new Date(
         actualTime.getFullYear(),
         actualTime.getMonth(),
@@ -22,8 +22,7 @@ export default function ControlledPopup(props) {
         0
     );
 
-    var timeRemaining = endOfDay.getTime() - actualTime.getTime();
-
+    // Função para renderizar o contador
     function renderer({ hours, minutes, seconds, completed }) {
         return (
             <div className="countdown">
@@ -35,19 +34,14 @@ export default function ControlledPopup(props) {
         );
     }
 
-    const [piada, setPiada] = useState(null);
+    // Lógica para calcular as sequências de vitórias a partir do localstorage
     const listaStorage = [
         `listaVitorias${capitalizeFirstLetter(props.dificuldade)}`,
         `listaJaJogados${capitalizeFirstLetter(props.dificuldade)}`,
     ];
 
-    // console.log(listaStorage[0], listaStorage[1]);
     let listaVitorias = JSON.parse(localStorage.getItem(listaStorage[0]));
     let listaJaJogados = JSON.parse(localStorage.getItem(listaStorage[1]));
-
-    // console.log("listas do local:");
-    // console.log(listaVitorias);
-    // console.log(listaJaJogados);
 
     let jogos = listaJaJogados.length;
     let vitorias = Math.round((listaVitorias.length * 100) / jogos);
@@ -59,28 +53,15 @@ export default function ControlledPopup(props) {
     let pJogos = listaJaJogados.length - 1;
 
     while (pJogos >= 0) {
-        // console.log(`--------------------------`)
-        // console.log(`pJogos: ${pJogos}`)
-        // console.log(`sequenciaContador: ${sequenciaContador}`)
-        // console.log(`sequenciaAtual: ${sequenciaAtual}`)
-        // console.log(`maiorSequencia: ${maiorSequencia}`)
-        // console.log(`jaAchouAtual: ${jaAchouAtual}`)
-        
         if (listaVitorias.includes(listaJaJogados[pJogos])) {
-            // console.log("Entrou no if")
             sequenciaContador++;
-            // console.log(`Aumentando contador, sequenciaContador: ${sequenciaContador}`)
-            if (pJogos === 0 && sequenciaAtual === 0){
-                sequenciaAtual = sequenciaContador
+            if (pJogos === 0 && sequenciaAtual === 0) {
+                sequenciaAtual = sequenciaContador;
             }
-
-
-        } else {    
+        } else {
             if (!jaAchouAtual) {
-                // console.log(`Achamos sequencia atual! JaAchou = ${jaAchouAtual}`)
                 sequenciaAtual = sequenciaContador;
                 jaAchouAtual = true;
-                // console.log(`A sequencia atual é: ${sequenciaAtual}`)
             }
             sequenciaContador = 0;
         }
@@ -90,18 +71,15 @@ export default function ControlledPopup(props) {
         pJogos--;
     }
 
-    // console.log(`--------------------------`)
-    // console.log(`pós while`)
-    // console.log(`pJogos: ${pJogos}`)
-    // console.log(`sequenciaAtual: ${sequenciaAtual}`)
-    // console.log(`maiorSequencia: ${maiorSequencia}`)
-    // console.log(`jaAchouAtual: ${jaAchouAtual}`)
-
+    // Get da piada do popup
     useEffect(() => {
-        axios.get("https://fathomless-cove-20305.herokuapp.com/api/piada-aleatoria/").then((res) => {
-            setPiada(res.data);
-            console.log("get");
-        });
+        axios
+            .get(
+                "https://fathomless-cove-20305.herokuapp.com/api/piada-aleatoria/"
+            )
+            .then((res) => {
+                setPiada(res.data);
+            });
     }, []);
 
     return (
@@ -141,7 +119,6 @@ export default function ControlledPopup(props) {
 
                     <h1 className="setup">{piada.setup}</h1>
                     <h2 className="punchline">{piada["punch_line"]}</h2>
-                    {/* <h2 className="tempoRestante">{tempoRestante}</h2> */}
                     <Countdown date={endOfDay} renderer={renderer} />
                 </div>
             </div>

@@ -2,6 +2,7 @@ import React from "react";
 import "./Header.css";
 
 export default function Header(props) {
+    // Cor do botão clicado
     const styles = {
         color: "white",
     };
