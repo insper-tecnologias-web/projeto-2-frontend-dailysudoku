@@ -9,6 +9,7 @@ export default function ControlledPopup(props) {
     function capitalizeFirstLetter(string) {
         return string.charAt(0).toUpperCase() + string.slice(1);
     }
+    // console.log("rederizei")
 
     var actualTime = new Date(Date.now());
 
@@ -55,29 +56,51 @@ export default function ControlledPopup(props) {
     let sequenciaContador = 0;
     let maiorSequencia = 0;
     let jaAchouAtual = false;
-    let pVitorias = listaVitorias.length - 1;
     let pJogos = listaJaJogados.length - 1;
 
-    while (pVitorias >= 0) {
-        if (listaVitorias[pVitorias] === listaJaJogados[pJogos]) {
+    while (pJogos >= 0) {
+        // console.log(`--------------------------`)
+        // console.log(`pJogos: ${pJogos}`)
+        // console.log(`sequenciaContador: ${sequenciaContador}`)
+        // console.log(`sequenciaAtual: ${sequenciaAtual}`)
+        // console.log(`maiorSequencia: ${maiorSequencia}`)
+        // console.log(`jaAchouAtual: ${jaAchouAtual}`)
+        
+        if (listaVitorias.includes(listaJaJogados[pJogos])) {
+            // console.log("Entrou no if")
             sequenciaContador++;
-        } else {
+            // console.log(`Aumentando contador, sequenciaContador: ${sequenciaContador}`)
+            if (pJogos === 0 && sequenciaAtual === 0){
+                sequenciaAtual = sequenciaContador
+            }
+
+
+        } else {    
             if (!jaAchouAtual) {
+                // console.log(`Achamos sequencia atual! JaAchou = ${jaAchouAtual}`)
                 sequenciaAtual = sequenciaContador;
                 jaAchouAtual = true;
+                // console.log(`A sequencia atual é: ${sequenciaAtual}`)
             }
             sequenciaContador = 0;
         }
         if (sequenciaContador > maiorSequencia) {
             maiorSequencia = sequenciaContador;
         }
-        pVitorias--;
         pJogos--;
     }
 
+    // console.log(`--------------------------`)
+    // console.log(`pós while`)
+    // console.log(`pJogos: ${pJogos}`)
+    // console.log(`sequenciaAtual: ${sequenciaAtual}`)
+    // console.log(`maiorSequencia: ${maiorSequencia}`)
+    // console.log(`jaAchouAtual: ${jaAchouAtual}`)
+
     useEffect(() => {
-        axios.get("http://127.0.0.1:8000/api/piada-aleatoria/").then((res) => {
+        axios.get("https://fathomless-cove-20305.herokuapp.com/api/piada-aleatoria/").then((res) => {
             setPiada(res.data);
+            console.log("get");
         });
     }, []);
 

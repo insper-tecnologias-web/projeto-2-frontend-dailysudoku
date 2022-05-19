@@ -17,11 +17,11 @@ function App() {
         medium: false,
         hard: false,
     });
-    const [popup, setPopup] = useState(true);
+    const [popup, setPopup] = useState(false);
     const [focus, setFocus] = useState(0);
     const [listaErrados, setListaErrados] = useState([]);
     const [dificuldade, setDificuldade] = useState("easy");
-    const [desenhando, setDesenhando] = useState(true);
+    const [desenhando, setDesenhando] = useState(false);
 
     // localStorage.clear();
     // console.log(localStorage.getItem("jogoEasy"));
@@ -146,7 +146,7 @@ function App() {
 
     useEffect(() => {
         axios
-            .get("http://127.0.0.1:8000/api/sudoku/ultimo-jogo/easy/")
+            .get("https://fathomless-cove-20305.herokuapp.com/api/sudoku/ultimo-jogo/easy/")
             .then((res) => {
                 if (
                     !JSON.parse(localStorage.getItem("jogoEasy")) ||
@@ -171,7 +171,7 @@ function App() {
             })
             .then(
                 axios
-                    .get("http://127.0.0.1:8000/api/sudoku/ultimo-jogo/medium/")
+                    .get("https://fathomless-cove-20305.herokuapp.com/api/sudoku/ultimo-jogo/medium/")
                     .then((res) => {
                         if (
                             !JSON.parse(localStorage.getItem("jogoMedium")) ||
@@ -198,7 +198,7 @@ function App() {
             )
             .then(
                 axios
-                    .get("http://127.0.0.1:8000/api/sudoku/ultimo-jogo/hard/")
+                    .get("https://fathomless-cove-20305.herokuapp.com/api/sudoku/ultimo-jogo/hard/")
                     .then((res) => {
                         if (
                             !JSON.parse(localStorage.getItem("jogoHard")) ||
