@@ -52,7 +52,7 @@ export default function Quadrado(props) {
             className={classeCssContainer}
             style={styles}
         >
-            <h4>{props.objeto.resposta}</h4>
+            {/* <h4>{props.objeto.resposta}</h4> */}
             {props.objeto.desenhando ? (
                 <>
                     <input
