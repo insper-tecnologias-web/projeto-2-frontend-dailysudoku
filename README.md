@@ -5,6 +5,7 @@ Feito por Eduardo Cunha e Paulo Falcão utilizando React e Django.
 ## O jogo está disponivel em: https://dailysudoku.herokuapp.com/
 ## Para rodar localmente:
   npm i
+  
   npm start
 
 ### Descrição do projeto:
