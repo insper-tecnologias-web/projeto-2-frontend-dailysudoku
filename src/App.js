@@ -603,6 +603,11 @@ function App() {
                         className="pencil"
                         src={desenhando ? "/pencil2.png" : "/pencil.png"}
                     />
+                    {/* <div className="made-by">
+                        <div className="by">Made By:</div>
+                        <div className="paulo">Paulo Falcão</div>
+                        <div className="eduardo">Eduardo Cunha</div>
+                    </div> */}
                 </div>
 
                 {popup && (

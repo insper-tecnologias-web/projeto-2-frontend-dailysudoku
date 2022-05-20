@@ -34,7 +34,11 @@ export default function Header(props) {
                 </h3>
             </div>
             <h1 className="header-titulo">DAILY SUDOKU</h1>
-            <div className="container-direita"></div>
+            <div className="container-direita">
+                <div className="by">Made By: Eduardo Cunha & Paulo Falcão </div>
+                {/* <div className="paulo"></div>
+                <div className="eduardo"></div> */}
+            </div>
         </div>
     );
 }
