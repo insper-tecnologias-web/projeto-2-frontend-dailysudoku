@@ -2,7 +2,8 @@
 
 Feito por Eduardo Cunha e Paulo Falcão utilizando React e Django.
 
-### O jogo está disponivel na [web](https://dailysudoku.herokuapp.com/)
+Disponível em: https://dailysudoku.herokuapp.com/
+
 ### Para rodar localmente, basto clonar o repositório e digitar esses dois comandos no terminal:
   npm i
   
